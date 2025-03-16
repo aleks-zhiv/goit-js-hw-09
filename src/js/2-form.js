@@ -1,29 +1,41 @@
-const form = document.querySelector(".feedback-form")
+'use strict';
 
+const form = document.querySelector('.feedback-form');
 
-const input = form.elements.email
-const textarea = form.elements.message
+if (!form) {
+    console.warn(
+    'Элемент .feedback-form не найден на странице. Скрипт формы не будет выполнен.'
+    );
+} else {
+    const STORAGE_KEY = 'feedback-form-state';
 
+    const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    form.elements.email.value = savedData.email || '';
+    form.elements.message.value = savedData.message || '';
 
-const localStorageKey = "storageExample"
+    form.addEventListener('input', event => {
+    const formData = {
+        email: form.elements.email.value,
+        message: form.elements.message.value,
+    };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    });
 
-const saved = localStorage.getItem(localStorageKey)
-if (saved) {
-    const { email, message } = JSON.parse(saved)
-    input.value = email || ""
-    textarea.value = message || ""
+    form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const formData = {
+        email: form.elements.email.value.trim(),
+        message: form.elements.message.value.trim(),
+    };
+
+    if (!formData.email || !formData.message) {
+        alert('Пожалуйста, заполните все поля');
+        return;
+    }
+
+    console.log(formData);
+    localStorage.removeItem(STORAGE_KEY);
+    form.reset();
+    });
 }
-
-form.addEventListener("input", () => {
-    localStorage.setItem(localStorageKey, JSON.stringify({
-        email: input.value,
-        message: textarea.value
-    }))
-})
-
-form.addEventListener("submit", (evt) => {
-    evt.preventDefault()
-    console.log({ email: input.value, message: textarea.value })
-    localStorage.removeItem(localStorageKey)
-    form.reset()
-})
