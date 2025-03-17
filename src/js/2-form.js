@@ -8,26 +8,26 @@ if (!form) {
     );
 } else {
     const STORAGE_KEY = 'feedback-form-state';
-
     const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    form.elements.email.value = savedData.email || '';
-    form.elements.message.value = savedData.message || '';
+    const formData = {
+        email: savedData.email || '',
+        message: savedData.message || '',
+    };
+
+    form.elements.email.value = formData.email;
+    form.elements.message.value = formData.message;
 
     form.addEventListener('input', event => {
-    const formData = {
-        email: form.elements.email.value,
-        message: form.elements.message.value,
-    };
+        formData.email = form.elements.email.value;
+        formData.message = form.elements.message.value;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
     });
 
     form.addEventListener('submit', event => {
     event.preventDefault();
 
-    const formData = {
-        email: form.elements.email.value.trim(),
-        message: form.elements.message.value.trim(),
-    };
+        formData.email = form.elements.email.value.trim();
+        formData.message = form.elements.message.value.trim();
 
     if (!formData.email || !formData.message) {
         alert('Пожалуйста, заполните все поля');
